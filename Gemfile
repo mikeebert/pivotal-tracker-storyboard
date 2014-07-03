@@ -38,6 +38,6 @@ gem 'spring',        group: :development
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
-gem 'pivotal-tracker', :path => "/Users/ulyanov/Projects"
+gem 'pivotal-tracker', :git => "git@github.com:dulyanov/pivotal-tracker.git"
 gem 'haml'
 gem 'pry'
