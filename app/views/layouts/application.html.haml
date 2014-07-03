@@ -1,0 +1,28 @@
+!!!
+%html
+  %head
+    <title>StoryBoard</title>
+    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
+    / Bootstrap latest compiled and minified CSS
+    = stylesheet_link_tag "//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"
+    / Bootstrap optional theme
+    = stylesheet_link_tag  "//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css"
+
+    = javascript_include_tag 'application', 'data-turbolinks-track' => true
+
+    = csrf_meta_tags
+  %body
+    = yield
+    / jQuery (necessary for Bootstrap's JavaScript plugins)
+    = javascript_include_tag "//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"
+    / Bootstrap latest compiled and minified JavaScript
+    = javascript_include_tag "//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"
+    :javascript
+      $(function ()
+        { $("[data-toggle='popover']").popover({
+            template: '<div class="popover"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
+        });
+      });
+      $(function ()
+        { $("[data-toggle='tooltip']").tooltip()
+      })
