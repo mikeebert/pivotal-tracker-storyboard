@@ -23,7 +23,7 @@ module IterationHelper
 
     label = role_label(role)
 
-    if needs_role_assigned?(role, story.current_state) && role_initials.blank?
+    if needs_role_assigned?(role, story) && role_initials.blank?
       content_tag(:span, "Need #{label}", class: "label label-danger")
     elsif !role_initials.blank?
       "#{label}: #{role_initials}"
@@ -46,10 +46,11 @@ module IterationHelper
       end
     end
 
-    def needs_role_assigned?(role, story_state)
+    def needs_role_assigned?(role, story)
+      return false if story.story_type == "chore"
       case role
-      when "developers" then ["started", "finished", "delivered", "accepted"].include?(story_state)
-      when "reviewers", "qa" then ["finished", "delivered", "accepted"].include?(story_state)
+      when "developers" then ["started", "finished", "delivered", "accepted"].include?(story.current_state)
+      when "reviewers", "qa" then ["finished", "delivered", "accepted"].include?(story.current_state)
       end
     end
 end
