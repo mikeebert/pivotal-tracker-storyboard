@@ -1,5 +1,5 @@
 GIT
-  remote: git@github.com:dulyanov/pivotal-tracker.git
+  remote: https://github.com/dulyanov/pivotal-tracker.git
   revision: 04d946196f549e625994100cc7b9eb4ac93948ae
   specs:
     pivotal-tracker (0.5.12)
