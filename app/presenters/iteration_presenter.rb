@@ -4,6 +4,7 @@ module PivotalTracker
     attr_accessor :developers
     attr_accessor :reviewers
     attr_accessor :qa
+    attr_accessor :github_urls
   end
 end
 
@@ -71,7 +72,7 @@ class IterationPresenter
   end
 
   def iteration_date_range
-    "#{Date.today.beginning_of_week} - #{Date.today.end_of_week}"
+    "#{Date.current.beginning_of_week} - #{Date.current.end_of_week}"
   end
 
   private
@@ -87,7 +88,7 @@ class IterationPresenter
     end
 
     def iteration_stories_filter
-      "(state:started OR state:finished OR state:delivered OR accepted_after:#{Date.today.beginning_of_week}) includedone:true"
+      "(state:started OR state:finished OR state:delivered OR accepted_after:#{Date.current.beginning_of_weeks}) includedone:true"
     end
 
     def people
@@ -102,6 +103,10 @@ class IterationPresenter
       story.description.to_s[/#{role}:\s*(.*)\s*/, 1].try(:strip)
     end
 
+    def github_urls_from_description(story)
+      story.description.to_s.scan(/(https:\/\/git.enova.com\/\S+)/).map(&:first)
+    end
+
     def initialize_people_objects(stories)
       stories.map do |story|
         reviewer_initials = [initials_from_description(story, "CR1"), initials_from_description(story, "CR2")].compact
@@ -110,6 +115,7 @@ class IterationPresenter
         story.developers  = people.select { |person| story.owner_ids.include? person.id }
         story.reviewers   = reviewer_initials.map { |initials| person_by_initials(initials) }.compact
         story.qa          = qa_initials.map { |initials| person_by_initials(initials) }.compact
+        story.github_urls = github_urls_from_description(story)
         story
       end
     end

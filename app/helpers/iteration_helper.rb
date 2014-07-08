@@ -1,12 +1,11 @@
 module IterationHelper
   def story_icon(type)
-    icon = case type
-           when "bug" then "fire"
-           when "chore" then "cog"
-           when "feature" then "star"
-           else "question-sign"
-           end
-    content_tag(:span, "", class: "glyphicon glyphicon-#{icon}")
+    case type
+    when "bug" then content_tag(:span, "", class: "fa fa-bug")
+    when "chore" then content_tag(:span, "", class: "glyphicon glyphicon-cog")
+    when "feature" then content_tag(:span, "", class: "glyphicon glyphicon-star")
+    end
+
   end
 
   def story_state_color(state)

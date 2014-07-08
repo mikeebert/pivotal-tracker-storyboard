@@ -16,14 +16,11 @@
 %br
 .row
   - @iteration_presenter.columns.each do |column|
-    .col-md-2.text-center
-      .well.well-sm
+    .col-md-2
+      .well.well-sm.text-center
         %strong
           = column[:title]
           %span.label.label-default= column[:total]
-.row
-  - @iteration_presenter.columns.each do |column|
-    .col-md-2
       %ul.list-group
         - column[:stories].each do |story|
           %li.list-group-item{:class => "list-group-item-#{story_state_color(story.current_state)}"}
@@ -32,6 +29,9 @@
             %span.glyphicon.glyphicon-info-sign{:title => story.name, :"data-container" => "body", :"data-toggle" => "popover", :"data-placement" => "right", :"data-content" => story.description}
             %a{href: story.url, target: "_blank"}
               %span.glyphicon.glyphicon-link
+            - story.github_urls.each do |github_url|
+              %a{href: github_url, target: "_blank"}
+                %span.fa.fa-github
             %small
               %strong
                 %span{style: "color: green;"}
