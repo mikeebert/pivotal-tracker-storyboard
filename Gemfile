@@ -41,3 +41,4 @@ gem 'spring',        group: :development
 gem 'pivotal-tracker', :git => "https://github.com/dulyanov/pivotal-tracker.git"
 gem 'haml'
 gem 'pry'
+gem 'newrelic_rpm'
