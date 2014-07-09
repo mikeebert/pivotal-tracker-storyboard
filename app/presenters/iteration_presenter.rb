@@ -88,7 +88,7 @@ class IterationPresenter
     end
 
     def iteration_stories_filter
-      "(state:started OR state:finished OR state:delivered OR accepted_after:#{Date.current.beginning_of_weeks}) includedone:true"
+      "(state:started OR state:finished OR state:delivered OR accepted_after:#{Date.current.beginning_of_week}) includedone:true"
     end
 
     def people
