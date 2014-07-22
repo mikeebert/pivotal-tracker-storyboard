@@ -1,12 +1,19 @@
 class IterationController < ApplicationController
-  before_filter :check_api_token, :only => :view
+  before_filter :check_api_token
+
   def index
+    redirect_to :action => :view if @api_token
   end
 
   def view
-    redirect_to :action => :index unless @api_token
+    return redirect_to :action => :index unless @api_token
 
-    @iteration_presenter = IterationPresenter.new(@api_token, params[:project_id])
+    if session[:iteration_presenter]
+      @iteration_presenter = session[:iteration_presenter]
+    else
+      @iteration_presenter = IterationPresenter.new(@api_token, params[:project_id])
+      session[:iteration_presenter] = @iteration_presenter
+    end
   end
 
   private

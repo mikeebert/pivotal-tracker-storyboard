@@ -80,4 +80,10 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   #config.active_record.dump_schema_after_migration = false
+
+  config.cache_store = :dalli_store, ENV["MEMCACHEDCLOUD_SERVERS"], { :namespace => "PT-SB",
+                                                                      :expires_in => 30.days,
+                                                                      :compress => true,
+                                                                      :username => ENV["MEMCACHEDCLOUD_USERNAME"],
+                                                                      :password => ENV["MEMCACHEDCLOUD_PASSWORD"] }
 end

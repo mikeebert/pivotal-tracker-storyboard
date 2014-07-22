@@ -34,4 +34,11 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
+  memcached_config = YAML::load(ERB.new(IO.read(File.join(Rails.root, 'config', 'memcached.yml'))).result)
+  config.cache_store = :dalli_store, memcached_config["servers"], { :namespace => "PT-SB",
+                                                                    :expires_in => 30.days,
+                                                                    :compress => true,
+                                                                    :username => memcached_config["username"],
+                                                                    :password => memcached_config["password"] }
 end
