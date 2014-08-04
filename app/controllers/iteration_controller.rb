@@ -16,6 +16,12 @@ class IterationController < ApplicationController
     end
   end
 
+  def refresh
+    session.delete :iteration_presenter
+
+    redirect_to :action => :view
+  end
+
   private
 
     def check_api_token

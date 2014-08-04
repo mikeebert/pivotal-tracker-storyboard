@@ -3,6 +3,8 @@ Rails.application.routes.draw do
   get 'iteration/index'
   get 'iteration/view', as: 'iteration'
   get 'iteration/view/:project_id', to: 'iteration#view', as: 'project'
+  get 'iteration/refresh', as: 'refresh'
+
   root 'iteration#index'
 
 

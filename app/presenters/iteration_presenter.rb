@@ -10,11 +10,13 @@ end
 
 class IterationPresenter
   attr_reader :selected_project_id
+  attr_reader :updated_at
 
   def initialize(api_token, project_id = nil)
     raise ArgumentError unless api_token
     PivotalTracker::Client.token = api_token
     @selected_project_id = project_id.to_i if project_id
+    @updated_at = Time.now
   end
 
   def projects

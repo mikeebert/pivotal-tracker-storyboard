@@ -1,3 +1,7 @@
+.pull-right
+  %a{href: "#{refresh_path}"}
+    %span.glyphicon.glyphicon-refresh
+  %small (#{time_ago_in_words @iteration_presenter.updated_at})
 %h1
   Story Board
   %small (#{@iteration_presenter.iteration_date_range})
