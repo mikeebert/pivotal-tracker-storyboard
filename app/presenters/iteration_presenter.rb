@@ -21,7 +21,8 @@ class IterationPresenter
 
   def projects
     @projects ||= PivotalTracker::Project.all("fields=name,current_velocity").
-      map {|project| project.name.gsub!("NetCredit - ", ""); project }
+      map {|project| project.name.gsub!("NetCredit - ", ""); project }.
+      delete_if {|project| project.name.starts_with?("Onstride")}
   end
 
   def projects_velocity

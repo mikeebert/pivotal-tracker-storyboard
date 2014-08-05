@@ -45,6 +45,11 @@ GEM
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
+    better_errors (1.1.0)
+      coderay (>= 1.0.0)
+      erubis (>= 2.6.6)
+    binding_of_caller (0.7.2)
+      debug_inspector (>= 0.0.1)
     builder (3.2.2)
     coderay (1.1.0)
     coercible (1.0.0)
@@ -57,6 +62,7 @@ GEM
       execjs
     coffee-script-source (1.7.0)
     dalli (2.7.2)
+    debug_inspector (0.0.2)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     equalizer (0.0.9)
@@ -68,6 +74,7 @@ GEM
     hike (1.2.3)
     i18n (0.6.9)
     ice_nine (0.11.0)
+    interception (0.5)
     jbuilder (2.1.1)
       activesupport (>= 3.0.0, < 5)
       multi_json (~> 1.2)
@@ -93,6 +100,11 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    pry-rails (0.3.2)
+      pry (>= 0.9.10)
+    pry-rescue (1.4.1)
+      interception (>= 0.5)
+      pry
     rack (1.5.2)
     rack-test (0.6.2)
       rack (>= 1.0)
@@ -159,6 +171,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  better_errors
+  binding_of_caller
   coffee-rails (~> 4.0.0)
   dalli
   haml
@@ -166,7 +180,8 @@ DEPENDENCIES
   jquery-rails
   newrelic_rpm
   pivotal-tracker!
-  pry
+  pry-rails
+  pry-rescue
   rails (= 4.1.1)
   sass-rails (~> 4.0.3)
   sdoc (~> 0.4.0)

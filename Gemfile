@@ -40,6 +40,12 @@ gem 'spring',        group: :development
 
 gem 'pivotal-tracker', :git => "https://github.com/dulyanov/pivotal-tracker.git"
 gem 'haml'
-gem 'pry'
 gem 'newrelic_rpm'
 gem 'dalli'
+
+group :development do
+  gem 'pry-rescue'
+  gem 'pry-rails'
+  gem 'better_errors'
+  gem 'binding_of_caller'
+end

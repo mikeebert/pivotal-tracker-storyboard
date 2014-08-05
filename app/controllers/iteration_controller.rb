@@ -8,12 +8,7 @@ class IterationController < ApplicationController
   def view
     return redirect_to :action => :index unless @api_token
 
-    if session[:iteration_presenter]
-      @iteration_presenter = session[:iteration_presenter]
-    else
-      @iteration_presenter = IterationPresenter.new(@api_token, params[:project_id])
-      session[:iteration_presenter] = @iteration_presenter
-    end
+    @iteration_presenter = cached_iteration_presenter
   end
 
   def refresh
@@ -27,5 +22,9 @@ class IterationController < ApplicationController
     def check_api_token
       session[:api_token] = params[:api_token] if params[:api_token]
       @api_token          = session[:api_token]
+    end
+
+    def cached_iteration_presenter
+      session[:iteration_presenter] ||= IterationPresenter.new(@api_token, params[:project_id])
     end
 end
