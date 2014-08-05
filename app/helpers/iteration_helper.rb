@@ -5,7 +5,6 @@ module IterationHelper
     when "chore" then content_tag(:span, "", class: "glyphicon glyphicon-cog")
     when "feature" then content_tag(:span, "", class: "glyphicon glyphicon-star")
     end
-
   end
 
   def story_state_color(state)
@@ -29,6 +28,22 @@ module IterationHelper
     end
 
   end
+
+  def last_updated(iteration_presenter)
+    if iteration_presenter.updated_at
+      updated_ago = time_ago_in_words iteration_presenter.updated_at
+      content_tag(:span, "(last updated #{updated_ago} ago)", class: "small")
+    end
+  end
+
+  def all_projects_tab?(iteration_presenter)
+    !iteration_presenter.selected_project_id && !iteration_presenter.my_stories_only
+  end
+
+  def my_stories_tab?(iteration_presenter)
+    !iteration_presenter.selected_project_id && iteration_presenter.my_stories_only
+  end
+
 
   private
     def initials(people)

@@ -9,52 +9,57 @@ module PivotalTracker
 end
 
 class IterationPresenter
-  attr_reader :selected_project_id
-  attr_reader :updated_at
+  attr_accessor :selected_project_id
+  attr_accessor :my_stories_only
+  attr_reader   :updated_at
 
-  def initialize(api_token, project_id = nil)
+  def initialize(api_token)
     raise ArgumentError unless api_token
     PivotalTracker::Client.token = api_token
-    @selected_project_id = project_id.to_i if project_id
     @updated_at = Time.now
+  end
+
+  def me
+    @me ||= PivotalTracker::Me.all
   end
 
   def projects
     @projects ||= PivotalTracker::Project.all("fields=name,current_velocity").
-      map {|project| project.name.gsub!("NetCredit - ", ""); project }.
-      delete_if {|project| project.name.starts_with?("Onstride")}
+      map { |project| project.name.gsub!("NetCredit - ", ""); project }.
+      delete_if { |project| project.name.starts_with?("Onstride") }.
+      sort { |a, b| a.name <=> b.name }
   end
 
   def projects_velocity
-    @projects_velocity ||= projects.inject(0) { |sum, p| sum + p.current_velocity }
+    @projects_velocity ||= projects.map(&:current_velocity).inject(:+)
   end
 
   def started_stories
-    @started_stories ||= stories.select { |story| story.current_state == "started" }
+    stories.select { |story| story.current_state == "started" }
   end
 
   def finished_stories
-    @finished_stories ||= stories.select { |story| story.current_state == "finished" }.
+    stories.select { |story| story.current_state == "finished" }.
       reject { |story| story.labels.map(&:name).include?("ready for qa") }
   end
 
   def reviewed_stories
-    @reviewed_stories ||= stories.select { |story| story.labels.map(&:name).include?("ready for qa") }
+    stories.select { |story| story.labels.map(&:name).include?("ready for qa") }
   end
 
   def delivered_stories
-    @delivered_stories ||= stories.select { |story| story.current_state == "delivered" }
+    stories.select { |story| story.current_state == "delivered" }
   end
 
   def accepted_stories
-    @accepted_stories ||= stories.select { |story| story.current_state == "accepted" }.reject do |story|
+    stories.select { |story| story.current_state == "accepted" }.reject do |story|
       labels = story.labels.map(&:name)
       labels.include?("released") || labels.include?("will not do")
     end
   end
 
   def released_stories
-    @releaed_stories ||= stories.select { |story| story.current_state == "accepted" }.select do |story|
+    stories.select { |story| story.current_state == "accepted" }.select do |story|
       labels = story.labels.map(&:name)
       labels.include?("released") || labels.include?("will not do")
     end
@@ -70,7 +75,7 @@ class IterationPresenter
       { title: "Released",      stories: released_stories }
     ]
     columns.each do |column|
-      column[:total] = column[:stories].inject(0) { |sum, story| sum + story.estimate }
+      column[:total] = column[:stories].map(&:estimate).inject(:+).to_i
     end
   end
 
@@ -78,18 +83,21 @@ class IterationPresenter
     "#{Date.current.beginning_of_week} - #{Date.current.end_of_week}"
   end
 
-  private
-    def stories
-      #return @stories if @stories
-      @stories = if @selected_project_id
-        project = projects.find { |project| project.id == @selected_project_id }
-        project.stories.all(:search => iteration_stories_filter)
-      else
-        projects.inject([]) { |arr, project| arr + project.stories.all(:search => iteration_stories_filter) }
-      end
-      initialize_people_objects(@stories)
+  def project_iteration_estimates
+    all_stories.each_with_object({}) do |(project_id, stories), hash|
+      hash[project_id] = stories.map(&:estimate).inject(:+).to_i
     end
+  end
 
+  def all_iteration_estimate
+    project_iteration_estimates.values.inject(:+)
+  end
+
+  def my_iteration_estimate
+    all_stories.values.flatten.select {|story| my_story?(story) }.map(&:estimate).inject(:+).to_i
+  end
+
+  private
     def iteration_stories_filter
       "(state:started OR state:finished OR state:delivered OR accepted_after:#{Date.current.beginning_of_week}) includedone:true"
     end
@@ -110,6 +118,22 @@ class IterationPresenter
       story.description.to_s.scan(/(https:\/\/git.enova.com\/\S+)/).map(&:first)
     end
 
+    def all_stories
+      @all_stories ||= {}.tap do |hash|
+        projects.each { |project| hash[project.id] = initialize_people_objects(project.stories.all(:search => iteration_stories_filter)) }
+      end
+    end
+
+    def stories
+      stories = if selected_project_id
+        all_stories[selected_project_id]
+      else
+        all_stories.values.inject(:+)
+      end
+      stories.keep_if {|story| my_story?(story) } if my_stories_only
+      stories
+    end
+
     def initialize_people_objects(stories)
       stories.map do |story|
         reviewer_initials = [initials_from_description(story, "CR1"), initials_from_description(story, "CR2")].compact
@@ -121,5 +145,9 @@ class IterationPresenter
         story.github_urls = github_urls_from_description(story)
         story
       end
+    end
+
+    def my_story?(story)
+      (story.developers + story.reviewers + story.qa).include? person_by_initials(me.initials)
     end
 end

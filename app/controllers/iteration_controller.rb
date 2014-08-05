@@ -9,6 +9,8 @@ class IterationController < ApplicationController
     return redirect_to :action => :index unless @api_token
 
     @iteration_presenter = cached_iteration_presenter
+    @iteration_presenter.selected_project_id = params[:project_id].try(:to_i)
+    @iteration_presenter.my_stories_only = !!params[:my_stories_only]
   end
 
   def refresh
@@ -25,6 +27,6 @@ class IterationController < ApplicationController
     end
 
     def cached_iteration_presenter
-      session[:iteration_presenter] ||= IterationPresenter.new(@api_token, params[:project_id])
+      session[:iteration_presenter] ||= IterationPresenter.new(@api_token)
     end
 end

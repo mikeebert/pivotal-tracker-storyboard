@@ -3,23 +3,30 @@
     %span.glyphicon.glyphicon-refresh
     Refresh
   %br
-  - if @iteration_presenter.updated_at
-    %small (last updated #{time_ago_in_words @iteration_presenter.updated_at} ago)
+  = last_updated(@iteration_presenter)
 %h1
   Story Board
   %small (#{@iteration_presenter.iteration_date_range})
 %ul.nav.nav-tabs
-  %li{:class => ("active" unless @iteration_presenter.selected_project_id)}
+  %li{:class => ("active" if all_projects_tab?(@iteration_presenter))}
     %a{href: "#{iteration_path}"}
       All
-      %span.badge
-        = @iteration_presenter.projects_velocity
+      %span.label.label-default
+        = @iteration_presenter.all_iteration_estimate
+      -#%span.badge.alert-danger
+        %span.glyphicon.glyphicon-flash
+        = @iteration_presenter.all_iteration_estimate
+  %li{:class => ("active" if my_stories_tab?(@iteration_presenter))}
+    %a{href: "#{iteration_path(:my_stories_only => true)}"}
+      My Work
+      %span.label.label-default
+        = @iteration_presenter.my_iteration_estimate
   - @iteration_presenter.projects.each do |project|
     %li{:class => ("active" if project.id == @iteration_presenter.selected_project_id)}
       %a{href: "#{project_path(:project_id => project.id)}"}
         = project.name
-        %span.badge
-          = project.current_velocity
+        %span.label.label-default
+          = @iteration_presenter.project_iteration_estimates[project.id]
 %br
 .row
   - @iteration_presenter.columns.each do |column|
