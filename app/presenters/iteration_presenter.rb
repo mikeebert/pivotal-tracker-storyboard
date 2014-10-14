@@ -34,6 +34,10 @@ class IterationPresenter
     @projects_velocity ||= projects.map(&:current_velocity).inject(:+)
   end
 
+  def committed_stories
+    stories.select { |story| story.labels.map(&:name).include?("#{Date.current.beginning_of_week}")}
+  end
+
   def started_stories
     stories.select { |story| story.current_state == "started" }
   end
@@ -67,6 +71,7 @@ class IterationPresenter
 
   def columns
     columns = [
+      { title: "Committed",      stories: committed_stories },
       { title: "Started",       stories: started_stories },
       { title: "Ready for CR",  stories: finished_stories },
       { title: "Ready for QA",  stories: reviewed_stories },
@@ -99,7 +104,7 @@ class IterationPresenter
 
   private
     def iteration_stories_filter
-      "(state:started OR state:finished OR state:delivered OR accepted_after:#{Date.current.beginning_of_week}) includedone:true"
+      "(label:#{Date.current.beginning_of_week} OR state:started OR state:finished OR state:delivered OR accepted_after:#{Date.current.beginning_of_week}) includedone:true"
     end
 
     def people
